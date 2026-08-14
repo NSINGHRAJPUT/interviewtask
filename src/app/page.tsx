@@ -23,7 +23,8 @@ const svg = (
 );
 export default function Home() {
   const [deposit, setDeposit] = useState(0);
-  const [timePeriod, setTimePeriod] = useState(0);
+  const [timePeriod, setTimePeriod] = useState(1);
+  const [payoutFrequency, setPayoutFrequency] = useState("yearly");
   const [interestRate, setInterestRate] = useState(0);
   const [maturityAmount, setMaturityAmount] = useState(0);
   const [interestEarned, setInterestEarned] = useState(0);
@@ -63,39 +64,42 @@ export default function Home() {
 
   async function calculateInterest() {
     try {
-      console.log("timePeriod", timePeriod);
-      const totalAmount =
-        deposit * Math.pow(1 + interestRate / 100, timePeriod);
-      const interest = Math.floor(totalAmount) - Math.floor(deposit);
-      const commulativeRateOfReturn = (interest / deposit) * 100;
-      // console.log("Total Amount: ", Math.floor(totalAmount));
-      // console.log("Interest Earned: ", interest, deposit);
-      const firstYearAmount = Math.floor(
-        deposit * Math.pow(1 + interestRate / 100, 1),
-      );
-      const secondYearAmount = Math.floor(
-        deposit * Math.pow(1 + interestRate / 100, 2),
-      );
-      const thirdYearAmount = Math.floor(
-        deposit * Math.pow(1 + interestRate / 100, 3),
-      );
-      const fourthYearAmount = Math.floor(
-        deposit * Math.pow(1 + interestRate / 100, 4),
-      );
-      const fifthYearAmount = Math.floor(
-        deposit * Math.pow(1 + interestRate / 100, 5),
-      );
-      setFiveYearData([
-        firstYearAmount,
-        secondYearAmount,
-        thirdYearAmount,
-        fourthYearAmount,
-        fifthYearAmount,
-      ]);
+      if (deposit <= 0 || timePeriod <= 0 || interestRate <= 0) {
+        console.log("Please set all values greater than 0");
+        return;
+      }
 
+      // Determine compounding frequency
+      let compoundingFrequency = 1;
+      if (payoutFrequency === "quarterly") {
+        compoundingFrequency = 4;
+      } else if (payoutFrequency === "half-yearly") {
+        compoundingFrequency = 2;
+      } else {
+        compoundingFrequency = 1; // yearly and maturity
+      }
+
+      // Calculate total amount using compound interest formula
+      // A = P(1 + r/n/100)^(n*t)
+      const rate = interestRate / compoundingFrequency / 100;
+      const periods = compoundingFrequency * timePeriod;
+      const totalAmount = deposit * Math.pow(1 + rate, periods);
+
+      const interest = Math.floor(totalAmount) - Math.floor(deposit);
+      const cumulativeRateOfReturn = (interest / deposit) * 100;
+
+      // Calculate year-by-year data
+      const yearlyData = [];
+      for (let year = 1; year <= 5; year++) {
+        const yearAmount =
+          deposit * Math.pow(1 + rate, compoundingFrequency * year);
+        yearlyData.push(Math.floor(yearAmount));
+      }
+
+      setFiveYearData(yearlyData);
       setMaturityAmount(() => Math.floor(totalAmount));
       setInterestEarned(interest);
-      setCummulativeRateOfReturn(commulativeRateOfReturn);
+      setCummulativeRateOfReturn(cumulativeRateOfReturn);
     } catch (error) {
       console.log(error);
     }
@@ -153,18 +157,26 @@ export default function Home() {
           <p className="text-gray-500">
             Commulative Rate Of Return {commulativeRateOfReturn.toFixed(2)}%
           </p>
-          <select
-            value={timePeriod}
-            className="w-full h-10 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 p-2"
-            onChange={(e) => setTimePeriod(Number(e.target.value))}
-          >
-            <option value="quarterly" className="text-gray-300 p-2">
-              Quarterly
-            </option>
-            <option value="half-yearly">Half-Yearly</option>
-            <option value="yearly">Yearly</option>
-            <option value="maturity">Maturity</option>
-          </select>
+          <div className="flex flex-wrap gap-2 w-full">
+            {[
+              { value: "quarterly", label: "Quarterly" },
+              { value: "half-yearly", label: "Half-Yearly" },
+              { value: "yearly", label: "Yearly" },
+              { value: "maturity", label: "Maturity" },
+            ].map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setPayoutFrequency(option.value)}
+                className={`px-4 py-2 rounded font-semibold transition-colors ${
+                  payoutFrequency === option.value
+                    ? "bg-[#FFBF00] text-black"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
 
           <h2 className="text-lg font-semibold text-gray-700">
             Time Period(Years)
