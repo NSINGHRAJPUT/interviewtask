@@ -28,7 +28,9 @@ export default function Home() {
   const [interestRate, setInterestRate] = useState(0);
   const [maturityAmount, setMaturityAmount] = useState(0);
   const [interestEarned, setInterestEarned] = useState(0);
-  const [fiveYearData, setFiveYearData] = useState([1000, 2000, 3000, 4000, 5000]);
+  const [fiveYearData, setFiveYearData] = useState([
+    1000, 2000, 3000, 4000, 5000,
+  ]);
   const [commulativeRateOfReturn, setCummulativeRateOfReturn] = useState(0);
 
   // sample chart data
@@ -128,30 +130,53 @@ export default function Home() {
           <p className="text-gray-500 text-sm sm:text-base">
             Estimate how much your fix deposit inventment will grow over time
           </p>
-          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
-            Deposit Amount
-          </h2>
-          <input
-            type="range"
-            value={deposit}
-            onChange={(e) => setDeposit(Number(e.target.value))}
-            min={10000}
-            max={5000000}
-            step={10000}
-            className="w-full h-2 bg-[#FFBF00] rounded-lg appearance-none cursor-pointer dark:bg-gray-700 "
-          />
-          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
-            Rate of Return(%)
-          </h2>
-          <input
-            type="range"
-            value={interestRate}
-            onChange={(e) => setInterestRate(Number(e.target.value))}
-            min={5}
-            max={30}
-            step={1}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-          />
+          <div className="flex justify-between items-center w-full gap-2">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700">
+              Deposit Amount
+            </h2>
+            <span className="text-base sm:text-lg font-bold text-[#FFBF00] tabular-nums">
+              ${deposit.toLocaleString()}
+            </span>
+          </div>
+          <div className="w-full">
+            <input
+              type="range"
+              value={deposit}
+              onChange={(e) => setDeposit(Number(e.target.value))}
+              min={10000}
+              max={5000000}
+              step={10000}
+              className="w-full h-2 bg-[#FFBF00] rounded-lg appearance-none cursor-pointer dark:bg-gray-700 "
+            />
+            <div className="flex justify-between text-xs sm:text-sm text-gray-500 mt-1">
+              <span>$10,000</span>
+              <span>$5,000,000</span>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center w-full gap-2">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700">
+              Rate of Return(%)
+            </h2>
+            <span className="text-base sm:text-lg font-bold text-[#FFBF00] tabular-nums">
+              {interestRate}%
+            </span>
+          </div>
+          <div className="w-full">
+            <input
+              type="range"
+              value={interestRate}
+              onChange={(e) => setInterestRate(Number(e.target.value))}
+              min={5}
+              max={30}
+              step={1}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+            />
+            <div className="flex justify-between text-xs sm:text-sm text-gray-500 mt-1">
+              <span>5%</span>
+              <span>30%</span>
+            </div>
+          </div>
 
           <h2 className="text-base sm:text-lg font-semibold text-gray-700">
             Interest Payouts
@@ -180,18 +205,29 @@ export default function Home() {
             ))}
           </div>
 
-          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
-            Time Period(Years)
-          </h2>
-          <input
-            type="range"
-            value={timePeriod}
-            onChange={(e) => setTimePeriod(Number(e.target.value))}
-            min={1}
-            max={50}
-            step={1}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-          />
+          <div className="flex justify-between items-center w-full gap-2">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-700">
+              Time Period(Years)
+            </h2>
+            <span className="text-base sm:text-lg font-bold text-[#FFBF00] tabular-nums">
+              {timePeriod} {timePeriod === 1 ? "Year" : "Years"}
+            </span>
+          </div>
+          <div className="w-full">
+            <input
+              type="range"
+              value={timePeriod}
+              onChange={(e) => setTimePeriod(Number(e.target.value))}
+              min={1}
+              max={50}
+              step={1}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+            />
+            <div className="flex justify-between text-xs sm:text-sm text-gray-500 mt-1">
+              <span>1 Year</span>
+              <span>50 Years</span>
+            </div>
+          </div>
           <button
             onClick={calculateInterest}
             className="bg-[#FFBF00] hover:bg-[#e6a900] text-white font-bold py-2 px-4 rounded w-full sm:w-auto"
@@ -204,13 +240,17 @@ export default function Home() {
         <div className="flex flex-col justify-start items-center gap-6 sm:gap-10 bg-[#FFBF00] p-4 sm:p-6 lg:p-10 rounded-lg w-full lg:w-1/2 min-w-0">
           <div className="flex flex-row justify-around items-center gap-2 w-full">
             <div className="flex flex-col justify-start items-start gap-2">
-              <p className="text-gray-100 text-xs sm:text-sm">Maturity Amount</p>
+              <p className="text-gray-100 text-xs sm:text-sm">
+                Maturity Amount
+              </p>
               <h2 className="text-lg sm:text-xl font-bold">
                 ${maturityAmount.toFixed(2)}
               </h2>
             </div>
             <div className="flex flex-col justify-start items-start gap-2">
-              <p className="text-gray-100 text-xs sm:text-sm">Interest Earned</p>
+              <p className="text-gray-100 text-xs sm:text-sm">
+                Interest Earned
+              </p>
               <h2 className="text-lg sm:text-xl font-bold">
                 ${interestEarned.toFixed(2)}
               </h2>
