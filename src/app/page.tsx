@@ -28,7 +28,7 @@ export default function Home() {
   const [interestRate, setInterestRate] = useState(0);
   const [maturityAmount, setMaturityAmount] = useState(0);
   const [interestEarned, setInterestEarned] = useState(0);
-  const [fiveYearData, setFiveYearData] = useState([1000, 0, 0, 0, 0]);
+  const [fiveYearData, setFiveYearData] = useState([1000, 2000, 3000, 4000, 5000]);
   const [commulativeRateOfReturn, setCummulativeRateOfReturn] = useState(0);
 
   // sample chart data
