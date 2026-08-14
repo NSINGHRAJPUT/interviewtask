@@ -119,14 +119,16 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-row justify-between items-center h-screen w-full bg-white py-10 px-20 gap-10">
+      <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center min-h-screen w-full bg-white py-6 px-4 sm:px-8 lg:px-20 gap-6 lg:gap-10">
         {/* left side */}
-        <div className="flex flex-col justify-start items-start gap-5 bg-white p-10 rounded-lg ">
-          <h1 className="text-2xl font-bold text-[#FFBF00]">FD Calculator</h1>
-          <p className="text-gray-500">
+        <div className="flex flex-col justify-start items-start gap-4 sm:gap-5 bg-white p-4 sm:p-6 lg:p-10 rounded-lg w-full lg:w-1/2 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-[#FFBF00]">
+            FD Calculator
+          </h1>
+          <p className="text-gray-500 text-sm sm:text-base">
             Estimate how much your fix deposit inventment will grow over time
           </p>
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
             Deposit Amount
           </h2>
           <input
@@ -138,7 +140,7 @@ export default function Home() {
             step={10000}
             className="w-full h-2 bg-[#FFBF00] rounded-lg appearance-none cursor-pointer dark:bg-gray-700 "
           />
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
             Rate of Return(%)
           </h2>
           <input
@@ -151,10 +153,10 @@ export default function Home() {
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
           />
 
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
             Interest Payouts
           </h2>
-          <p className="text-gray-500">
+          <p className="text-gray-500 text-sm sm:text-base">
             Commulative Rate Of Return {commulativeRateOfReturn.toFixed(2)}%
           </p>
           <div className="flex flex-wrap gap-2 w-full">
@@ -167,7 +169,7 @@ export default function Home() {
               <button
                 key={option.value}
                 onClick={() => setPayoutFrequency(option.value)}
-                className={`px-4 py-2 rounded font-semibold transition-colors ${
+                className={`px-3 sm:px-4 py-2 text-sm sm:text-base rounded font-semibold transition-colors ${
                   payoutFrequency === option.value
                     ? "bg-[#FFBF00] text-black"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -178,7 +180,7 @@ export default function Home() {
             ))}
           </div>
 
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
             Time Period(Years)
           </h2>
           <input
@@ -192,43 +194,73 @@ export default function Home() {
           />
           <button
             onClick={calculateInterest}
-            className="bg-[#FFBF00] hover:bg-[#e6a900] text-white font-bold py-2 px-4 rounded"
+            className="bg-[#FFBF00] hover:bg-[#e6a900] text-white font-bold py-2 px-4 rounded w-full sm:w-auto"
           >
             Calculate
           </button>
         </div>
 
         {/* right side */}
-        <div className="flex flex-col justify-start items-center gap-10 bg-[#FFBF00] p-10 rounded-lg">
+        <div className="flex flex-col justify-start items-center gap-6 sm:gap-10 bg-[#FFBF00] p-4 sm:p-6 lg:p-10 rounded-lg w-full lg:w-1/2 min-w-0">
           <div className="flex flex-row justify-around items-center gap-2 w-full">
             <div className="flex flex-col justify-start items-start gap-2">
-              <p className="text-gray-100 text-sm">Maturity Amount</p>
-              <h2 className="text-xl font-bold">
+              <p className="text-gray-100 text-xs sm:text-sm">Maturity Amount</p>
+              <h2 className="text-lg sm:text-xl font-bold">
                 ${maturityAmount.toFixed(2)}
               </h2>
             </div>
             <div className="flex flex-col justify-start items-start gap-2">
-              <p className="text-gray-100 text-sm">Interest Earned</p>
-              <h2 className="text-xl font-bold">
+              <p className="text-gray-100 text-xs sm:text-sm">Interest Earned</p>
+              <h2 className="text-lg sm:text-xl font-bold">
                 ${interestEarned.toFixed(2)}
               </h2>
             </div>
           </div>
           {/* bar chart  */}
-          <div>
+          <div className="w-full bg-white rounded-lg p-2 sm:p-4">
             <ReactApexChart
               options={{
                 chart: {
                   id: "bar-chart",
+                  toolbar: { show: false },
+                  parentHeightOffset: 0,
+                },
+                colors: ["#FFBF00"],
+                dataLabels: { enabled: false },
+                plotOptions: {
+                  bar: {
+                    columnWidth: "55%",
+                    borderRadius: 4,
+                  },
+                },
+                grid: {
+                  borderColor: "#eee",
+                  padding: { left: 0, right: 0 },
                 },
                 xaxis: {
                   categories: labels,
+                  title: { text: "Year" },
                 },
                 yaxis: {
                   title: {
                     text: "Amount",
                   },
+                  labels: {
+                    formatter: (value: number) =>
+                      value >= 100000
+                        ? `${(value / 100000).toFixed(1)}L`
+                        : `${Math.round(value)}`,
+                  },
                 },
+                responsive: [
+                  {
+                    breakpoint: 640,
+                    options: {
+                      yaxis: { title: { text: undefined } },
+                      plotOptions: { bar: { columnWidth: "70%" } },
+                    },
+                  },
+                ],
               }}
               series={[
                 {
@@ -237,29 +269,30 @@ export default function Home() {
                 },
               ]}
               type="bar"
-              height={240}
-              width={500}
-              style={{ margin: "0 auto" }}
+              height={260}
+              width="100%"
             />
           </div>
-          <div className="flex flex-row justify-around items-start gap-2 w-full ">
+          <div className="flex flex-col sm:flex-row justify-around items-stretch sm:items-start gap-3 sm:gap-2 w-full">
             {/* card 1 */}
-            <div className="bg-stone-700 p-4 rounded-lg shadow h-36 w-48 relative pt-8">
+            <div className="bg-stone-700 p-4 rounded-lg shadow min-h-36 w-full sm:w-48 relative pt-8">
               <div className="absolute top-2 right-2"> {svg}</div>
-              <h3 className="text-lg font-bold text-light">
+              <h3 className="text-base sm:text-lg font-bold text-light">
                 Check Suitable Products for Your Investment
               </h3>
-              <p className="text-gray-300">exclusively for you</p>
+              <p className="text-gray-300 text-sm">exclusively for you</p>
             </div>
 
             {/* card 2 */}
-            <div className="bg-gray-600 p-4 rounded-lg shadow h-36 w-48   relative pt-8">
+            <div className="bg-gray-600 p-4 rounded-lg shadow min-h-36 w-full sm:w-48 relative pt-8">
               <div className="absolute top-2 right-2"> {svg}</div>
 
-              <h3 className="text-lg font-bold text-light">
+              <h3 className="text-base sm:text-lg font-bold text-light">
                 Need Help Finding Right Product?
               </h3>
-              <p className="text-gray-300">Get Guidance from Wealth Manager</p>
+              <p className="text-gray-300 text-sm">
+                Get Guidance from Wealth Manager
+              </p>
             </div>
           </div>
         </div>
